@@ -13,5 +13,5 @@ RUN go install github.com/cosmtrek/air@v1.43.0
 COPY go.mod go.sum ./
 # COPY . ./
 RUN go mod download
-EXPOSE 80
+EXPOSE 8080
 CMD ["air", "-c", ".air.toml"]
