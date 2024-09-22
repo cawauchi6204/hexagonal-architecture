@@ -12,7 +12,7 @@ func main() {
 	// 環境変数からポート番号を取得
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080" // デフォルトのポート番号
+		port = "8888" // デフォルトのポート番号
 	}
 
 	e.GET("/", func(c echo.Context) error {

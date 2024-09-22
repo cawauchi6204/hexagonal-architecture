@@ -7,7 +7,7 @@ services:
     volumes:
       - ./go/:/go/src/app
     ports:
-      - "8080:8080"
+      - "8888:8888"
     container_name: hexagonal-architecture-backend
     environment:
-    - PORT=8080
+    - PORT=8888
