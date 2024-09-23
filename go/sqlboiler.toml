@@ -1,0 +1,13 @@
+pkgname  = "schemas"
+output   = "schemas"
+wipe = true
+no-tests = true
+no-auto-timestamps = true
+
+[mysql]
+  dbname="db"
+  host="127.0.0.1"
+  port=3333
+  user="root"
+  pass="rootpassword"
+  sslmode="false"

@@ -136,6 +136,7 @@ CREATE TABLE followers (
     follower_id CHAR(36),
     followed_id CHAR(36),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (follower_id, followed_id),
     FOREIGN KEY (follower_id) REFERENCES users(id),
     FOREIGN KEY (followed_id) REFERENCES users(id),
     UNIQUE KEY unique_follow (follower_id, followed_id)
@@ -151,6 +152,7 @@ CREATE TABLE users_tags (
     user_id CHAR(36),
     tag_id CHAR(36),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (user_id, tag_id),
     FOREIGN KEY (user_id) REFERENCES users(id),
     FOREIGN KEY (tag_id) REFERENCES tags(id),
     UNIQUE KEY unique_user_tag (user_id, tag_id)
@@ -160,6 +162,7 @@ CREATE TABLE thread_tags (
     thread_id CHAR(36),
     tag_id CHAR(36),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (thread_id, tag_id),
     FOREIGN KEY (thread_id) REFERENCES threads(id),
     FOREIGN KEY (tag_id) REFERENCES tags(id),
     UNIQUE KEY unique_thread_tag (thread_id, tag_id)
