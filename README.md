@@ -246,8 +246,8 @@ FROM (
 INSERT INTO posts (id, thread_id, user_id, content, created_at)
 SELECT 
     UUIDv4(),
-    (SELECT id FROM threads ORDER BY RAND() LIMIT 1),
-    (SELECT id FROM users ORDER BY RAND() LIMIT 1),
+    thread_id,
+    user_id,
     CONCAT(
         ELT(MOD(seq.n, 10) + 1, 'この話題について詳しく知りたいです。', '私も同じ経験がありました。', '面白い視点ですね。', 'もっと情報を共有してください。',
             'これは非常に役立つ情報です。', '別の角度から考えてみましょう。', 'この意見には賛成できません。', '素晴らしい投稿をありがとうございます。',
@@ -256,10 +256,17 @@ SELECT
     ),
     NOW() - INTERVAL FLOOR(RAND() * 365) DAY
 FROM (
-    SELECT a.N + b.N * 10 + 1 as n
-    FROM (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
-         (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
-    ORDER BY n LIMIT 100
+    SELECT 
+        t.id AS thread_id,
+        u.id AS user_id,
+        a.N + b.N * 10 + 1 as n
+    FROM 
+        threads t
+        CROSS JOIN users u,
+        (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4) a,
+        (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4) b
+    ORDER BY RAND()
+    LIMIT 500
 ) seq;
 
 -- comments テーブルのシードデータ
