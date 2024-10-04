@@ -180,49 +180,177 @@ CREATE TABLE thread_tags (
 
 
 ## seeder
+-- UUIDv4生成関数（既に存在する場合はスキップ）
+DELIMITER $$
+DROP FUNCTION IF EXISTS UUIDv4$$
+CREATE FUNCTION UUIDv4() RETURNS CHAR(36)
+BEGIN
+    RETURN LOWER(CONCAT(
+        HEX(RANDOM_BYTES(4)),
+        '-', HEX(RANDOM_BYTES(2)),
+        '-4', SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3),
+        '-', HEX(FLOOR(ASCII(RANDOM_BYTES(1)) / 64) + 8),
+        SUBSTR(HEX(RANDOM_BYTES(2)), 2, 3),
+        '-', HEX(RANDOM_BYTES(6))
+    ));
+END$$
+DELIMITER ;
+
 -- users テーブルのシードデータ
-INSERT INTO users (id, username, email, password_hash, created_at) VALUES
-('123e4567-e89b-12d3-a456-426614174000', 'user1', 'user1@example.com', 'hashed_password_1', CURRENT_TIMESTAMP),
-('223e4567-e89b-12d3-a456-426614174001', 'user2', 'user2@example.com', 'hashed_password_2', CURRENT_TIMESTAMP),
-('323e4567-e89b-12d3-a456-426614174002', 'user3', 'user3@example.com', 'hashed_password_3', CURRENT_TIMESTAMP);
+```
+INSERT INTO users (id, username, email, password_hash, created_at)
+SELECT 
+    UUIDv4(),
+    CONCAT(
+        ELT(MOD(seq.n, 30) + 1, '山田', '佐藤', '鈴木', '田中', '高橋', '渡辺', '伊藤', '中村', '小林', '加藤',
+            'John', 'Emma', 'Michael', 'Sophia', 'William', 'Olivia', 'James', 'Ava', 'Robert', 'Isabella',
+            'Liu', 'Zhang', 'Wang', 'Li', 'Chen', 'Yang', 'Zhao', 'Wu', 'Zhou', 'Sun'),
+        LPAD(seq.n, 3, '0')
+    ),
+    CONCAT(LOWER(CONCAT(
+        ELT(MOD(seq.n, 30) + 1, '山田', '佐藤', '鈴木', '田中', '高橋', '渡辺', '伊藤', '中村', '小林', '加藤',
+            'John', 'Emma', 'Michael', 'Sophia', 'William', 'Olivia', 'James', 'Ava', 'Robert', 'Isabella',
+            'Liu', 'Zhang', 'Wang', 'Li', 'Chen', 'Yang', 'Zhao', 'Wu', 'Zhou', 'Sun'),
+        LPAD(seq.n, 3, '0')
+    )), '@example.com'),
+    CONCAT('hashed_password_', seq.n),
+    NOW() - INTERVAL FLOOR(RAND() * 365) DAY
+FROM (
+    SELECT a.N + b.N * 10 + 1 as n
+    FROM (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+         (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
+    ORDER BY n LIMIT 100
+) seq;
 
 -- threads テーブルのシードデータ
-INSERT INTO threads (id, title, user_id, created_at) VALUES
-('423e4567-e89b-12d3-a456-426614174003', '最初のスレッド', '123e4567-e89b-12d3-a456-426614174000', CURRENT_TIMESTAMP),
-('523e4567-e89b-12d3-a456-426614174004', '2番目のスレッド', '223e4567-e89b-12d3-a456-426614174001', CURRENT_TIMESTAMP);
+INSERT INTO threads (id, title, user_id, created_at)
+SELECT 
+    UUIDv4(),
+    CONCAT(
+        ELT(MOD(seq.n, 20) + 1, '最新のAI技術について', '美味しいラーメン屋さん情報', '効果的な勉強法', '週末の旅行プラン', 'おすすめの映画2023',
+            '健康的な食生活のコツ', 'プログラミング初心者の質問', '環境にやさしい生活習慣', '面白い海外ドラマ', '株式投資のヒント',
+            '子育ての悩み相談', 'ガジェット最新情報', '料理レシピ交換', 'フィットネスのモチベーション維持', '語学学習のコツ',
+            '写真撮影テクニック', '読書感想文シェア', 'ペットの飼い方アドバイス', '節約生活のヒント', 'ゲーム攻略情報'),
+        ' ', LPAD(seq.n, 3, '0')
+    ),
+    (SELECT id FROM users ORDER BY RAND() LIMIT 1),
+    NOW() - INTERVAL FLOOR(RAND() * 365) DAY
+FROM (
+    SELECT a.N + b.N * 10 + 1 as n
+    FROM (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+         (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
+    ORDER BY n LIMIT 100
+) seq;
 
 -- posts テーブルのシードデータ
-INSERT INTO posts (id, thread_id, user_id, content, created_at) VALUES
-('623e4567-e89b-12d3-a456-426614174005', '423e4567-e89b-12d3-a456-426614174003', '123e4567-e89b-12d3-a456-426614174000', '最初の投稿です', CURRENT_TIMESTAMP),
-('723e4567-e89b-12d3-a456-426614174006', '423e4567-e89b-12d3-a456-426614174003', '223e4567-e89b-12d3-a456-426614174001', '2番目の投稿です', CURRENT_TIMESTAMP),
-('823e4567-e89b-12d3-a456-426614174007', '523e4567-e89b-12d3-a456-426614174004', '323e4567-e89b-12d3-a456-426614174002', '別のスレッドの投稿です', CURRENT_TIMESTAMP);
+INSERT INTO posts (id, thread_id, user_id, content, created_at)
+SELECT 
+    UUIDv4(),
+    (SELECT id FROM threads ORDER BY RAND() LIMIT 1),
+    (SELECT id FROM users ORDER BY RAND() LIMIT 1),
+    CONCAT(
+        ELT(MOD(seq.n, 10) + 1, 'この話題について詳しく知りたいです。', '私も同じ経験がありました。', '面白い視点ですね。', 'もっと情報を共有してください。',
+            'これは非常に役立つ情報です。', '別の角度から考えてみましょう。', 'この意見には賛成できません。', '素晴らしい投稿をありがとうございます。',
+            'もう少し具体的に説明していただけますか？', 'この話題について、専門家の意見も聞いてみたいです。'),
+        ' (Post ', seq.n, ')'
+    ),
+    NOW() - INTERVAL FLOOR(RAND() * 365) DAY
+FROM (
+    SELECT a.N + b.N * 10 + 1 as n
+    FROM (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+         (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
+    ORDER BY n LIMIT 100
+) seq;
 
 -- comments テーブルのシードデータ
-INSERT INTO comments (id, post_id, user_id, content, created_at) VALUES
-('923e4567-e89b-12d3-a456-426614174008', '623e4567-e89b-12d3-a456-426614174005', '223e4567-e89b-12d3-a456-426614174001', '最初のコメントです', CURRENT_TIMESTAMP),
-('a23e4567-e89b-12d3-a456-426614174009', '623e4567-e89b-12d3-a456-426614174005', '323e4567-e89b-12d3-a456-426614174002', '2番目のコメントです', CURRENT_TIMESTAMP);
+INSERT INTO comments (id, post_id, user_id, content, created_at)
+SELECT 
+    UUIDv4(),
+    (SELECT id FROM posts ORDER BY RAND() LIMIT 1),
+    (SELECT id FROM users ORDER BY RAND() LIMIT 1),
+    CONCAT(
+        ELT(MOD(seq.n, 10) + 1, '同感です！', 'なるほど、参考になります。', 'もう少し詳しく教えてください。', '私も似たような経験があります。',
+            'この意見には賛成できません。', '面白い視点ですね。', 'ありがとうございます、助かりました。', 'これは考えさせられますね。',
+            'もっと議論を深めたいです。', '新しい発見がありました。'),
+        ' (Comment ', seq.n, ')'
+    ),
+    NOW() - INTERVAL FLOOR(RAND() * 365) DAY
+FROM (
+    SELECT a.N + b.N * 10 + 1 as n
+    FROM (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+         (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
+    ORDER BY n LIMIT 100
+) seq;
 
 -- users_comments テーブルのシードデータ
-INSERT INTO users_comments (id, user_id, comment_id, is_like, created_at) VALUES
-('b23e4567-e89b-12d3-a456-426614174010', '123e4567-e89b-12d3-a456-426614174000', '923e4567-e89b-12d3-a456-426614174008', TRUE, CURRENT_TIMESTAMP),
-('c23e4567-e89b-12d3-a456-426614174011', '223e4567-e89b-12d3-a456-426614174001', 'a23e4567-e89b-12d3-a456-426614174009', TRUE, CURRENT_TIMESTAMP);
+INSERT INTO users_comments (id, user_id, comment_id, is_like, created_at)
+SELECT 
+    UUIDv4(),
+    (SELECT id FROM users ORDER BY RAND() LIMIT 1),
+    (SELECT id FROM comments ORDER BY RAND() LIMIT 1),
+    ROUND(RAND()),
+    NOW() - INTERVAL FLOOR(RAND() * 365) DAY
+FROM (
+    SELECT a.N + b.N * 10 + 1 as n
+    FROM (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+         (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
+    ORDER BY n LIMIT 100
+) seq
+ON DUPLICATE KEY UPDATE is_like = VALUES(is_like);
 
 -- followers テーブルのシードデータ
-INSERT INTO followers (follower_id, followed_id, created_at) VALUES
-('123e4567-e89b-12d3-a456-426614174000', '223e4567-e89b-12d3-a456-426614174001', CURRENT_TIMESTAMP),
-('223e4567-e89b-12d3-a456-426614174001', '323e4567-e89b-12d3-a456-426614174002', CURRENT_TIMESTAMP);
+INSERT INTO followers (follower_id, followed_id, created_at)
+SELECT 
+    u1.id,
+    u2.id,
+    NOW() - INTERVAL FLOOR(RAND() * 365) DAY
+FROM 
+    users u1
+    CROSS JOIN users u2
+WHERE 
+    u1.id <> u2.id
+ORDER BY RAND()
+LIMIT 100
+ON DUPLICATE KEY UPDATE created_at = VALUES(created_at);
 
 -- tags テーブルのシードデータ
-INSERT INTO tags (id, name, created_at) VALUES
-('d23e4567-e89b-12d3-a456-426614174012', 'プログラミング', CURRENT_TIMESTAMP),
-('e23e4567-e89b-12d3-a456-426614174013', 'デザイン', CURRENT_TIMESTAMP);
+INSERT INTO tags (id, name, created_at)
+SELECT 
+    UUIDv4(),
+    CONCAT(
+        ELT(MOD(seq.n, 20) + 1, 'テクノロジー', '料理', '旅行', '健康', 'スポーツ', '音楽', '映画', '読書', 'ファッション', 'アート',
+            'ビジネス', '教育', '環境', 'ペット', 'ゲーム', 'DIY', '写真', '科学', '歴史', '言語'),
+        LPAD(seq.n, 3, '0')
+    ),
+    NOW() - INTERVAL FLOOR(RAND() * 365) DAY
+FROM (
+    SELECT a.N + b.N * 10 + 1 as n
+    FROM (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) a,
+         (SELECT 0 AS N UNION SELECT 1 UNION SELECT 2 UNION SELECT 3 UNION SELECT 4 UNION SELECT 5 UNION SELECT 6 UNION SELECT 7 UNION SELECT 8 UNION SELECT 9) b
+    ORDER BY n LIMIT 100
+) seq;
 
 -- users_tags テーブルのシードデータ
-INSERT INTO users_tags (user_id, tag_id, created_at) VALUES
-('123e4567-e89b-12d3-a456-426614174000', 'd23e4567-e89b-12d3-a456-426614174012', CURRENT_TIMESTAMP),
-('223e4567-e89b-12d3-a456-426614174001', 'e23e4567-e89b-12d3-a456-426614174013', CURRENT_TIMESTAMP);
+INSERT IGNORE INTO users_tags (user_id, tag_id, created_at)
+SELECT DISTINCT
+    u.id,
+    t.id,
+    NOW() - INTERVAL FLOOR(RAND() * 365) DAY
+FROM 
+    users u
+    CROSS JOIN tags t
+ORDER BY RAND()
+LIMIT 100;
 
 -- thread_tags テーブルのシードデータ
-INSERT INTO thread_tags (thread_id, tag_id, created_at) VALUES
-('423e4567-e89b-12d3-a456-426614174003', 'd23e4567-e89b-12d3-a456-426614174012', CURRENT_TIMESTAMP),
-('523e4567-e89b-12d3-a456-426614174004', 'e23e4567-e89b-12d3-a456-426614174013', CURRENT_TIMESTAMP);
+INSERT IGNORE INTO thread_tags (thread_id, tag_id, created_at)
+SELECT DISTINCT
+    th.id,
+    t.id,
+    NOW() - INTERVAL FLOOR(RAND() * 365) DAY
+FROM 
+    threads th
+    CROSS JOIN tags t
+ORDER BY RAND()
+LIMIT 100;
+```
