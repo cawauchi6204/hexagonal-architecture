@@ -177,3 +177,52 @@ CREATE TABLE thread_tags (
 - `comments` テーブルは、コメントの情報を保持します。
 - `users_comments` テーブルは、ユーザーのコメントに対するいいねの情報を保持します。
 - `followers` テーブルは、ユーザーのフォロー情報を保持します。
+
+
+## seeder
+-- users テーブルのシードデータ
+INSERT INTO users (id, username, email, password_hash, created_at) VALUES
+('123e4567-e89b-12d3-a456-426614174000', 'user1', 'user1@example.com', 'hashed_password_1', CURRENT_TIMESTAMP),
+('223e4567-e89b-12d3-a456-426614174001', 'user2', 'user2@example.com', 'hashed_password_2', CURRENT_TIMESTAMP),
+('323e4567-e89b-12d3-a456-426614174002', 'user3', 'user3@example.com', 'hashed_password_3', CURRENT_TIMESTAMP);
+
+-- threads テーブルのシードデータ
+INSERT INTO threads (id, title, user_id, created_at) VALUES
+('423e4567-e89b-12d3-a456-426614174003', '最初のスレッド', '123e4567-e89b-12d3-a456-426614174000', CURRENT_TIMESTAMP),
+('523e4567-e89b-12d3-a456-426614174004', '2番目のスレッド', '223e4567-e89b-12d3-a456-426614174001', CURRENT_TIMESTAMP);
+
+-- posts テーブルのシードデータ
+INSERT INTO posts (id, thread_id, user_id, content, created_at) VALUES
+('623e4567-e89b-12d3-a456-426614174005', '423e4567-e89b-12d3-a456-426614174003', '123e4567-e89b-12d3-a456-426614174000', '最初の投稿です', CURRENT_TIMESTAMP),
+('723e4567-e89b-12d3-a456-426614174006', '423e4567-e89b-12d3-a456-426614174003', '223e4567-e89b-12d3-a456-426614174001', '2番目の投稿です', CURRENT_TIMESTAMP),
+('823e4567-e89b-12d3-a456-426614174007', '523e4567-e89b-12d3-a456-426614174004', '323e4567-e89b-12d3-a456-426614174002', '別のスレッドの投稿です', CURRENT_TIMESTAMP);
+
+-- comments テーブルのシードデータ
+INSERT INTO comments (id, post_id, user_id, content, created_at) VALUES
+('923e4567-e89b-12d3-a456-426614174008', '623e4567-e89b-12d3-a456-426614174005', '223e4567-e89b-12d3-a456-426614174001', '最初のコメントです', CURRENT_TIMESTAMP),
+('a23e4567-e89b-12d3-a456-426614174009', '623e4567-e89b-12d3-a456-426614174005', '323e4567-e89b-12d3-a456-426614174002', '2番目のコメントです', CURRENT_TIMESTAMP);
+
+-- users_comments テーブルのシードデータ
+INSERT INTO users_comments (id, user_id, comment_id, is_like, created_at) VALUES
+('b23e4567-e89b-12d3-a456-426614174010', '123e4567-e89b-12d3-a456-426614174000', '923e4567-e89b-12d3-a456-426614174008', TRUE, CURRENT_TIMESTAMP),
+('c23e4567-e89b-12d3-a456-426614174011', '223e4567-e89b-12d3-a456-426614174001', 'a23e4567-e89b-12d3-a456-426614174009', TRUE, CURRENT_TIMESTAMP);
+
+-- followers テーブルのシードデータ
+INSERT INTO followers (follower_id, followed_id, created_at) VALUES
+('123e4567-e89b-12d3-a456-426614174000', '223e4567-e89b-12d3-a456-426614174001', CURRENT_TIMESTAMP),
+('223e4567-e89b-12d3-a456-426614174001', '323e4567-e89b-12d3-a456-426614174002', CURRENT_TIMESTAMP);
+
+-- tags テーブルのシードデータ
+INSERT INTO tags (id, name, created_at) VALUES
+('d23e4567-e89b-12d3-a456-426614174012', 'プログラミング', CURRENT_TIMESTAMP),
+('e23e4567-e89b-12d3-a456-426614174013', 'デザイン', CURRENT_TIMESTAMP);
+
+-- users_tags テーブルのシードデータ
+INSERT INTO users_tags (user_id, tag_id, created_at) VALUES
+('123e4567-e89b-12d3-a456-426614174000', 'd23e4567-e89b-12d3-a456-426614174012', CURRENT_TIMESTAMP),
+('223e4567-e89b-12d3-a456-426614174001', 'e23e4567-e89b-12d3-a456-426614174013', CURRENT_TIMESTAMP);
+
+-- thread_tags テーブルのシードデータ
+INSERT INTO thread_tags (thread_id, tag_id, created_at) VALUES
+('423e4567-e89b-12d3-a456-426614174003', 'd23e4567-e89b-12d3-a456-426614174012', CURRENT_TIMESTAMP),
+('523e4567-e89b-12d3-a456-426614174004', 'e23e4567-e89b-12d3-a456-426614174013', CURRENT_TIMESTAMP);
