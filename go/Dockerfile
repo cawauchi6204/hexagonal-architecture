@@ -11,7 +11,9 @@ RUN apk update --no-cache && \
 RUN go install github.com/cosmtrek/air@v1.43.0
 
 COPY go.mod go.sum ./
-# COPY . ./
 RUN go mod download
-EXPOSE 8888
+
+COPY . .
+
+EXPOSE 8080
 CMD ["air", "-c", ".air.toml"]
