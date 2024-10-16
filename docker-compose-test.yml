@@ -1,7 +1,8 @@
 services:
-  app:
+  app_test:
     build:
       context: ./go
+      dockerfile: ./docker/test/Dockerfile
     image: hexagonal-architecture-backend-test
     tty: true
     stdin_open: true
@@ -9,14 +10,13 @@ services:
       - ./go/:/go/src/app
     ports:
       - "18888:8080"
-    container_name: hexagonal-architecture-backend-test
     environment:
       - PORT=8080
     depends_on:
-      - db
-  db:
+      - db_test
+  db_test:
     build:
-      context: ./go
+      context: ./db
       dockerfile: ./docker/test/Dockerfile
     image: hexagonal-architecture-backend-db-test
     restart: always
@@ -24,7 +24,6 @@ services:
       - "33333:3306"
     volumes:
       - db-data-test:/var/lib/mysql
-    container_name: hexagonal-architecture-backend-db-test
 volumes:
   db-data-test:
     driver: local

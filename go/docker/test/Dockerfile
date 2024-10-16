@@ -1,10 +1,19 @@
-FROM mysql/mysql-server:8.0
+FROM golang:1.21.12-alpine
 
-ENV LANG=ja_JP.UTF-8
-ENV MYSQL_USER=user
-ENV MYSQL_PASSWORD=password
-ENV MYSQL_DATABASE=hexagonal_architecture_backend_test
-ENV MYSQL_ROOT_USER=root
-ENV MYSQL_ROOT_PASSWORD=rootpassword
-ENV MYSQL_ROOT_HOST=%
-ENV TZ=Asia/Tokyo
+ENV ROOT=/go/src/app
+ENV CGO_ENABLED 0
+WORKDIR ${ROOT}
+
+RUN apk update --no-cache && \
+    apk add --no-cache --update git \
+    mysql-client
+
+RUN go install github.com/cosmtrek/air@v1.43.0
+
+COPY go.mod go.sum ./
+RUN go mod download
+
+COPY . .
+
+EXPOSE 8080
+CMD ["air", "-c", ".air.toml"]

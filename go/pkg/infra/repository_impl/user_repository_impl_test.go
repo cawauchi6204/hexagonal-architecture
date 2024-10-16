@@ -18,7 +18,7 @@ func TestUserRepository(t *testing.T) {
 	fixtures, err := testfixtures.New(
 		testfixtures.Database(db),
 		testfixtures.Dialect("mysql"),
-		testfixtures.Directory("testdata/fixtures"),
+		testfixtures.Directory("../user_repository_impl_test"),
 	)
 	if err != nil {
 		t.Fatalf("Could not create fixtures: %v", err)

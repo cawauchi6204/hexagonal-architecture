@@ -16,7 +16,7 @@ test:
 
 ## compose-up-test: テスト用のdocker-compose起動
 compose-up-test:
-	docker compose -f "docker-compose-test.yml" up --force-recreate -d app db
+	docker compose -f "docker-compose-test.yml" up -d
 
 ## compose-down-test: テスト用のdocker-composeの破棄
 compose-down-test:
