@@ -15,7 +15,9 @@ func NewRouter(s *service_locater.ServiceLocater) *echo.Echo {
 		ServiceLocater: s,
 	}
 
-	e.GET("/", userHandler.List)
+	e.GET("/", func(c echo.Context) error {
+		return c.String(200, "一応動いてます!")
+	})
 	e.GET("/users", userHandler.List)
 
 	return e

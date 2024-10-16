@@ -1,0 +1,21 @@
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/cmd	[no test files]
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/application/core	[no test files]
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/application/usecase	[no test files]
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/domain/model	[no test files]
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/domain/repository	[no test files]
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/infra	[no test files]
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/infra/orm_converter	[no test files]
+=== RUN   TestReverse
+--- PASS: TestReverse (0.00s)
+PASS
+ok  	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/application/test	(cached)
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/presentation/handlers	[no test files]
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/presentation/routers	[no test files]
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/service_locater	[no test files]
+?   	github.com/cawauchi6204/hexagonal-architecture-todo/schemas	[no test files]
+=== RUN   TestUserRepository
+    user_repository_impl_test.go:24: Could not create fixtures: testfixtures: could not stat directory "testdata/fixtures": open testdata/fixtures: no such file or directory
+--- FAIL: TestUserRepository (0.00s)
+FAIL
+FAIL	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/infra/repository_impl	0.301s
+FAIL
