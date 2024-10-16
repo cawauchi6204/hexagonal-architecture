@@ -1,0 +1,22 @@
+name: TEST
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+      - develop
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Go
+        uses: actions/setup-go@v4
+      - name: Run test
+        run: |
+          make compose-up-test
+          sleep 10s
+          make test
