@@ -9,7 +9,7 @@ import (
 )
 
 func TestUserRepository(t *testing.T) {
-	db, err := sql.Open("mysql", "root:password@tcp(localhost:3306)/your_database_name")
+	db, err := sql.Open("mysql", "root:rootpassword@tcp(localhost:33333)/test")
 	if err != nil {
 		t.Fatalf("Could not connect to database: %v", err)
 	}
@@ -18,7 +18,7 @@ func TestUserRepository(t *testing.T) {
 	fixtures, err := testfixtures.New(
 		testfixtures.Database(db),
 		testfixtures.Dialect("mysql"),
-		testfixtures.Directory("../user_repository_impl_test"),
+		testfixtures.Directory("./user_repository_impl_test"),
 	)
 	if err != nil {
 		t.Fatalf("Could not create fixtures: %v", err)
