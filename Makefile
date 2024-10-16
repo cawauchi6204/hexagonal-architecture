@@ -24,3 +24,9 @@ compose-down-test:
 
 schema-generate:
 	cd go &&sqlboiler mysql
+
+migrate-up:
+	docker compose run --rm -e MIGRATION_DIRECTION=up migration
+
+migrate-down:
+	docker compose run --rm -e MIGRATION_DIRECTION=down migration

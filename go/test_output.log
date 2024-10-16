@@ -14,8 +14,6 @@ ok  	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/application/test	(c
 ?   	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/service_locater	[no test files]
 ?   	github.com/cawauchi6204/hexagonal-architecture-todo/schemas	[no test files]
 === RUN   TestUserRepository
-    user_repository_impl_test.go:24: Could not create fixtures: testfixtures: could not stat directory "../user_repository_impl_test": open ../user_repository_impl_test: no such file or directory
---- FAIL: TestUserRepository (0.00s)
-FAIL
-FAIL	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/infra/repository_impl	0.303s
-FAIL
+--- PASS: TestUserRepository (0.09s)
+PASS
+ok  	github.com/cawauchi6204/hexagonal-architecture-todo/pkg/infra/repository_impl	0.406s
