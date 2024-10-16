@@ -21,3 +21,6 @@ compose-up-test:
 ## compose-down-test: テスト用のdocker-composeの破棄
 compose-down-test:
 	docker compose -f "docker-compose-test.yml" down
+
+schema-generate:
+	cd go &&sqlboiler mysql
