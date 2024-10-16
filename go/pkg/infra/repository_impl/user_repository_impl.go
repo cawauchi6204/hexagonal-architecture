@@ -10,15 +10,15 @@ import (
 	"github.com/cawauchi6204/hexagonal-architecture-todo/schemas"
 )
 
-type userRepositoryImpl struct {
+type UserRepositoryImpl struct {
 	db *sql.DB
 }
 
-func NewUserRepositoryImpl(db *sql.DB) repository.UserRepository {
-	return &userRepositoryImpl{db: db}
+func NewUserRepository(db *sql.DB) repository.UserRepository {
+	return &UserRepositoryImpl{db: db}
 }
 
-func (r *userRepositoryImpl) Find(ctx context.Context, id int) (*model.User, error) {
+func (r *UserRepositoryImpl) Find(ctx context.Context, id int) (*model.User, error) {
 	user, err := schemas.Users().One(ctx, r.db)
 	if err != nil {
 		return nil, err
@@ -26,7 +26,7 @@ func (r *userRepositoryImpl) Find(ctx context.Context, id int) (*model.User, err
 	return orm_converter.ToModel(user), nil
 }
 
-func (r *userRepositoryImpl) FindAll(ctx context.Context) ([]*model.User, error) {
+func (r *UserRepositoryImpl) FindAll(ctx context.Context) ([]*model.User, error) {
 	rows, err := schemas.Users().All(ctx, r.db)
 	if err != nil {
 		return nil, err

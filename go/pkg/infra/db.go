@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/cawauchi6204/hexagonal-architecture-todo/pkg/application/core"
 	"github.com/go-sql-driver/mysql"
 	"github.com/rs/zerolog"
 	sqldblogger "github.com/simukti/sqldb-logger"
@@ -13,10 +14,10 @@ import (
 )
 
 func ReadDSN() string {
-	port := os.Getenv("DB_PORT")
-	user := os.Getenv("DB_ROOT_USER")
-	password := os.Getenv("DB_ROOT_PASSWORD")
-	dbname := os.Getenv("DB_DATABASE")
+	port := core.MustGetEnv("DB_PORT")
+	user := core.MustGetEnv("DB_ROOT_USER")
+	password := core.MustGetEnv("DB_ROOT_PASSWORD")
+	dbname := core.MustGetEnv("DB_DATABASE")
 
 	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, password, dbname, port, dbname)
 }

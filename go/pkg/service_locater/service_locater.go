@@ -4,24 +4,29 @@ import (
 	"database/sql"
 	"log"
 
+	"github.com/cawauchi6204/hexagonal-architecture-todo/pkg/application/usecase"
 	"github.com/cawauchi6204/hexagonal-architecture-todo/pkg/domain/repository"
 	"github.com/cawauchi6204/hexagonal-architecture-todo/pkg/infra"
+	"github.com/cawauchi6204/hexagonal-architecture-todo/pkg/infra/repository_impl"
 )
 
 type ServiceLocater struct {
 	Db *sql.DB
 
 	// repositories
-	userRepository repository.UserRepository
+	UserRepository repository.UserRepository
+
+	// usecases
+	UserUsecase *usecase.UserUsecase
 }
 
 func BuildServiceLocater(env string) *ServiceLocater {
 	var s *ServiceLocater
 	switch env {
 	case "local":
-		s = buildLocalServiceLocater()
+		s = buildLocalServiceLocater().registerRepositories().registerUsecases()
 	case "test":
-		s = buildTestServiceLocater()
+		s = buildTestServiceLocater().registerRepositories().registerUsecases()
 	default:
 		log.Fatalf("can not build service locater because env is unknown one: %s", env)
 		return nil
@@ -39,8 +44,17 @@ func buildTestServiceLocater() *ServiceLocater {
 	return &ServiceLocater{Db: db}
 }
 
-func (s *ServiceLocater) registerRepositories() {
+func (s *ServiceLocater) registerRepositories() *ServiceLocater {
 	db := s.Db
 
-	s.userRepository = repository_impl.NewUserRepository(db)
+	s.UserRepository = repository_impl.NewUserRepository(db)
+
+	return s
+}
+
+func (s *ServiceLocater) registerUsecases() *ServiceLocater {
+	s.UserUsecase = &usecase.UserUsecase{
+		UserRepository: s.UserRepository,
+	}
+	return s
 }
