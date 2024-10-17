@@ -30,3 +30,6 @@ migrate-up:
 
 migrate-down:
 	docker compose run --rm -e MIGRATION_DIRECTION=down migration
+
+dump-table:
+	sh ./db/dump_script.sh
