@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package hexagonal_architecture_backend_api;
+option go_package = "cawauchi6204/hexagonal-architecture/go_proto";
+
+import "google/api/annotations.proto";
+
+service Item {
+  rpc GetItem(GetItemRequest) returns (GetItemResponse) {
+    option (google.api.http) = {
+      post : "/item/get"
+      body : "*"
+    };
+  }
+}
+
+message GetItemRequest { string item_id = 1; }
+
+message GetItemResponse { string item_name = 2; }

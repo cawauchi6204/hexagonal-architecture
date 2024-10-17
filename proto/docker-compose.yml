@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  protoc:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: hexagonal-architecture-protos
+    working_dir: /usr/src/app
+    entrypoint: ["make", "all"]
+    volumes:
+      - ./:/usr/src/app

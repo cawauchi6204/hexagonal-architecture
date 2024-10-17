@@ -31,5 +31,13 @@ migrate-up:
 migrate-down:
 	docker compose run --rm -e MIGRATION_DIRECTION=down migration
 
+# テーブルを立ち上げた後に実行する
 dump-table:
-	sh ./db/dump_script.sh
+	sh db/dump_script.sh
+
+.PHONY: gen-protoc
+gen-protoc:
+	mkdir -p go/protos
+	docker compose -f proto/docker-compose.yml run --rm --build protoc
+	mv proto/go/protos/* ./go/protos/
+	rm -rf proto/go/
