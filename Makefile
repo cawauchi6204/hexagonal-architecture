@@ -42,3 +42,6 @@ gen-protoc:
 	docker compose -f proto/docker-compose.yml run --rm --build protoc
 	mv proto/go/protos/* ./go/protos/
 	rm -rf proto/go/
+
+frontend-build:
+	cd frontend && pnpm build

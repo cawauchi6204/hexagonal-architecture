@@ -13,10 +13,5 @@
     "nuxt": "^3.13.2",
     "vue": "latest",
     "vue-router": "latest"
-  },
-  "overrides": {
-    "vite": {
-      "rollup": "npm:@rollup/wasm-node"
-    }
   }
 }
