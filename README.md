@@ -1,6 +1,10 @@
 1. make compose-up
 2. make migrate-up
 
+cloudflare pagesのビルド構成の設定
+<img width="403" alt="image" src="https://github.com/user-attachments/assets/1e1ad3e4-0f21-4bff-8759-448889e75dca">
+
+
 上記で環境立ち上げられます.
 localhost:8888にアクセスするとブラウザでデータベースの中身を見ることができます
 
