@@ -1,5 +1,6 @@
 compose-up:
 	docker compose up -d
+	cd frontend && pnpm dev
 
 compose-down:
 	docker compose down

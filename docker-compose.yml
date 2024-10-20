@@ -38,6 +38,7 @@ services:
 volumes:
   db-data:
     driver: local
+  nuxt_node_modules:
 
 networks:
   app_network:
