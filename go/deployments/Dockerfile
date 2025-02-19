@@ -1,26 +1,23 @@
-FROM golang:1.22.4-alpine
+FROM golang:1.22.4-alpine AS builder
 
-ENV ROOT=/go/src/app
-ENV CGO_ENABLED=0
-WORKDIR ${ROOT}
-
-RUN apk update --no-cache && \
-    apk add --no-cache --update git \
-    mysql-client
-
-RUN go install github.com/volatiletech/sqlboiler/v4@v4.7.0
-RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@v4.7.0
-
+WORKDIR /app
 COPY . .
-# RUN go mod download
-# RUN CGO_ENABLED=0 go build -o .app ./cmd/app
-# ビルドコンテキスト内のファイルをコピー
-RUN ls -la
-# COPY /go.mod ../go.sum ./
 
-# RUN go mod download
+# 本番用バイナリのビルド
+RUN CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/main.go
 
-# COPY . .
+# 実行用の最小イメージ
+FROM alpine:3.19
 
-# EXPOSE 8080
-# CMD ["go", "run", "main.go"]
+# Cloud SQL Proxyのインストール
+RUN apk add --no-cache curl \
+    && curl -o /cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.1/cloud-sql-proxy.linux.amd64 \
+    && chmod +x /cloud-sql-proxy
+
+WORKDIR /app
+COPY --from=builder /app/server .
+COPY --from=builder /app/.env .
+
+# Cloud SQL Proxyを起動し、その後アプリケーションを実行
+CMD /cloud-sql-proxy --unix-socket /cloudsql ${INSTANCE_CONNECTION_NAME} & \
+    ./server

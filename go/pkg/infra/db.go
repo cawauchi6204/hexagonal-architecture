@@ -14,12 +14,26 @@ import (
 )
 
 func ReadDSN() string {
-	port := core.MustGetEnv("DB_PORT")
-	user := core.MustGetEnv("DB_ROOT_USER")
-	password := core.MustGetEnv("DB_ROOT_PASSWORD")
-	dbname := core.MustGetEnv("DB_DATABASE")
+	// Cloud SQL接続情報
+	instanceConnectionName := os.Getenv("INSTANCE_CONNECTION_NAME") // project:region:instance
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASSWORD")
+	dbName := os.Getenv("DB_DATABASE")
 
-	return fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true", user, password, dbname, port, dbname)
+	var dsn string
+	if os.Getenv("ENV") == "local" {
+		// ローカル開発環境用DSN
+		port := core.MustGetEnv("DB_PORT")
+		host := core.MustGetEnv("DB_HOST")
+		dsn = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?parseTime=true",
+			dbUser, dbPass, host, port, dbName)
+	} else {
+		// Cloud SQL用DSN
+		dsn = fmt.Sprintf("%s:%s@unix(/cloudsql/%s)/%s?parseTime=true",
+			dbUser, dbPass, instanceConnectionName, dbName)
+	}
+
+	return dsn
 }
 
 // InitDB db接続を初期化

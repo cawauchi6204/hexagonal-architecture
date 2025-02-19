@@ -1,0 +1,53 @@
+steps:
+  # ビルドステップ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}', '-f', 'deployments/Dockerfile', '.']
+    dir: 'go'
+
+  # イメージのプッシュ
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['push', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}']
+
+  # Cloud Runへのデプロイ
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: gcloud
+    args:
+      # サービス基本設定
+      - 'run'
+      - 'deploy'
+      - '${_SERVICE_NAME}'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - '${_REGION}'
+
+      # コンテナイメージ設定
+      - '--image'
+      - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_REPOSITORY}/${_SERVICE_NAME}'
+
+      # Cloud SQL設定
+      - '--add-cloudsql-instances'
+      - '${_INSTANCE_CONNECTION_NAME}'
+
+      # データベース関連のシークレット
+      - '--set-secrets'
+      - 'DB_USER=db-user:latest'
+      - '--set-secrets'
+      - 'DB_PASSWORD=db-password:latest'
+      - '--set-secrets'
+      - 'DB_DATABASE=db-name:latest'
+
+      # 環境変数設定
+      - '--set-env-vars'
+      - 'INSTANCE_CONNECTION_NAME=${_INSTANCE_CONNECTION_NAME}'
+      - '--set-env-vars'
+      - 'ENV=production'
+
+substitutions:
+  _REGION: asia-northeast1
+  _REPOSITORY: todo-app
+  _SERVICE_NAME: todo-api
+  _INSTANCE_CONNECTION_NAME: ${PROJECT_ID}:${_REGION}:todo-db
+
+options:
+  logging: CLOUD_LOGGING_ONLY
