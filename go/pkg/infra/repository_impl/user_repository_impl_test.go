@@ -1,6 +1,7 @@
 package repository_impl_test
 
 import (
+	"context"
 	"database/sql"
 	"testing"
 
@@ -34,7 +35,7 @@ func TestUserRepository(t *testing.T) {
 	// テストケースを追加
 	t.Run("ユーザーの取得テスト", func(t *testing.T) {
 		repo := repository_impl.NewUserRepository(db)
-		user, err := repo.GetByID(1)
+		user, err := repo.Find(context.Background(), 1)
 		assert.NoError(t, err)
 		assert.NotNil(t, user)
 		assert.Equal(t, "テストユーザー", user.Name)
@@ -42,7 +43,7 @@ func TestUserRepository(t *testing.T) {
 
 	t.Run("存在しないユーザーの取得テスト", func(t *testing.T) {
 		repo := repository_impl.NewUserRepository(db)
-		user, err := repo.GetByID(999)
+		user, err := repo.Find(context.Background(), 999)
 		assert.Error(t, err)
 		assert.Nil(t, user)
 	})
