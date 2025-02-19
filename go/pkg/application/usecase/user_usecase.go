@@ -5,6 +5,7 @@ import (
 
 	"github.com/cawauchi6204/hexagonal-architecture-todo/pkg/domain/model"
 	"github.com/cawauchi6204/hexagonal-architecture-todo/pkg/domain/repository"
+	"github.com/cawauchi6204/hexagonal-architecture-todo/pkg/infra/orm_converter"
 )
 
 type UserUsecase struct {
@@ -16,5 +17,6 @@ func (u *UserUsecase) List(ctx context.Context) ([]*model.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	users := orm_converter.ToModel(users)
 	return users, nil
 }
