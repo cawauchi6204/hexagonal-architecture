@@ -1,23 +1,26 @@
-FROM golang:1.22.4-alpine AS builder
+FROM golang:1.21.4-alpine as builder
 
-WORKDIR /app
+WORKDIR /go/src/app
+
+# 必要なツールのインストール
+RUN go install github.com/x-motemen/ghq@v1.4.2
+RUN go install github.com/volatiletech/sqlboiler/v4@v4.7.0
+RUN go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@v4.7.0
+RUN go install github.com/cosmtrek/air@v1.43.0
+
 COPY . .
 
-# 本番用バイナリのビルド
-RUN CGO_ENABLED=0 GOOS=linux go build -o server ./cmd/main.go
+# 依存関係のダウンロードとビルド
+RUN go mod download
+RUN CGO_ENABLED=0 go build -o ./tmp/app ./cmd/main.go
 
 # 実行用の最小イメージ
-FROM alpine:3.19
+FROM gcr.io/distroless/static-debian12
 
-# Cloud SQL Proxyのインストール
-RUN apk add --no-cache curl \
-    && curl -o /cloud-sql-proxy https://storage.googleapis.com/cloud-sql-connectors/cloud-sql-proxy/v2.8.1/cloud-sql-proxy.linux.amd64 \
-    && chmod +x /cloud-sql-proxy
+COPY --from=builder /go/src/app/ /
 
-WORKDIR /app
-COPY --from=builder /app/server .
-COPY --from=builder /app/.env .
+# ポートの公開
+EXPOSE 8080
 
-# Cloud SQL Proxyを起動し、その後アプリケーションを実行
-CMD /cloud-sql-proxy --unix-socket /cloudsql ${INSTANCE_CONNECTION_NAME} & \
-    ./server
+# 実行コマンド
+CMD ["/tmp/app"]
